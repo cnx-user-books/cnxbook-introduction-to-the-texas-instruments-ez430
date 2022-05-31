@@ -1,0 +1,84 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>7.3 - Lab 7: The ADC</title>
+  <metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>b923e136-14d8-49eb-96cd-057cfdab5659</md:uuid>
+</metadata>
+
+<content>
+
+<section id="s1">
+<exercise id="exercise4.1">
+<problem id="idp59296">
+<title>Background Questions</title>
+<para id="pro1">
+	<list id="l1" list-type="enumerated">
+<item>The ez430 has a 16 bit SD Converter. The number of bits used by the ADC is known as its resolution.  What are the number of possible values that the 16 bit SD Converter can represent?  </item>
+<item>Extreme voltages, either too high or too low, cannot be measured correctly.  What is the range of analog voltages that can be accurately represented on the ez430?  You may want to check the <term>User's Guide</term> or experiment with the hardware.</item>
+
+		<item>In the real world, signals are polluted by "noise" that alters the quality of the original signal.  Signal to Noise Ratio, SNR, is often used as a measure of the quality of a signal.  Before a signal is sampled through the ADC, it is helpful to condition the signal in order to improve its SNR.  What can be done to condition the signal?  Where would it be ideal to condition it and why?  (i.e. at the ADC, near the source, at the processor?) </item>
+<item>The Nyquist Theorem states that a signal must be sampled at least twice as fast as the highest frequency in order to be decoded without error. The minimum sampling frequency is therefore known as the Nyquist Sampling Rate. Typical, audio CDs are sampled at a rate of 44.1 kHz, and can be decoded to 65,536 unique voltage levels. What is the highest frequency that can be represented without error? How many bits per sample are used? What is the total data rate for a stereo CD?</item>
+
+
+	</list>
+</para>
+</problem>
+</exercise>
+
+<exercise id="exercise4.2">
+<problem id="idm6362064">
+<title>ADC Setup</title>
+<para id="pro2">
+<list id="l2" list-type="enumerated"><item>Figure out what the following codes is doing.  Set up the hardware so that it functions correctly, and comment each line of code.  What is the code's function?
+<code display="block" id="idp407392">#include "msp430x20x3.h"  
+ 
+void main(void)
+{  
+  
+  WDTCTL |= WDTPW + WDTHOLD;
+  DCOCTL = CALDCO_8MHZ;
+  BCSCTL1 = CALBC1_8MHZ;                 
+  P1DIR |= 0x01;                            
+  SD16CTL |= SD16REFON + SD16SSEL_1;         
+  SD16INCTL0 |= SD16INCH_6;                                    
+  SD16CCTL0 |= SD16SC;      
+
+   while (1)  {    
+     
+    while ((SD16IV &amp; SD16IFG)==0);
+
+    if (SD16MEM6 &gt;= 0xD6D8)
+      P1OUT |= 0x01;
+    else
+      P1OUT &amp;= ~0x01;
+    _NOP();  
+                           
+  }
+
+}
+</code>
+<note type="HINT" id="idp3628128"><label>HINT</label>Most modern compilers intended for use with embedded processors, such as the <term>IAR Workbench</term>, allow the user to check the status of the registers while the program is halted.  This is extremely helpful in debugging code.  For example, if the program is halted with a <code>_NOP()</code> after a sample is taken from the ADC, the user may check the <code>SD16MEMx</code> register (by setting a breakpoint at the _NOP() command) to see the new value that has been stored.  If a value has changed since the last time the processor was halted, it will turn red in the watch window.</note>
+</item>
+<item>Create a version of the program that is completely interrupt driven.  The original program uses a while-loop to poll for the interrupt flag.  What is the sampling rate?  Remember to put the processor into a low power mode and enable interrupts after configuring the SD Converter as discussed in <term>Lab 5</term></item>
+</list>
+</para>
+</problem>
+</exercise>
+
+<exercise id="element-464">
+<problem id="idm5158272">
+<title>LED Dimmer</title>
+<para id="element-910">Add the file containing the LED dimmer function you wrote in <term>Lab 4</term> to a new project in which you configure the SD Converter.  Attach a Photo Diode (DigiKey# ********), a diode that outputs a voltage depending on the ammount of light that hits it, to any one of the SD16 inputs.  Input the SD16MEMx value into the LED dimmer function in such a way that the LED's brigtness is indirectly propotional to the ammount of light that hits the Photo Diode. In other words, if we block the light to the diode, the LED should appear brighter; if we shine light on the diode, the LED should appear dimmer.  If you do not have access to a Photo Diode, simply set the input to the integrated temperature sensor and perform the same exercise.  </para></problem>
+</exercise>
+
+<exercise id="exercise4.3">
+<problem id="idm5507584">
+<title>Flash Storage</title>
+<para id="pro3">Now, chose any analog source (temperature sensor, Photo Diode, function generator etc.) on any input channel  and store the values in flash using what you learned in <term>Lab 6</term>.  After a specific number (that you select) of samples are stored, have your program output the values using the <code>printf</code> with the help of a <code>for</code> or <code>while</code> loop.  Then take the values and plot them on a graph.  You may want to store every 10th (or 20th or 50th etc.) sample in flash to be able to see the analog signal over a longer period of time.
+</para>
+</problem>
+</exercise>
+
+</section>
+
+  </content>
+  
+</document>

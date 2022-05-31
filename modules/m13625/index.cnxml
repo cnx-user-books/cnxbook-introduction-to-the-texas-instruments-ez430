@@ -1,0 +1,107 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>1.5 - Lab 1: C and Macros with Texas Instruments' ez430</title>
+  <metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>0c1fd0bb-36ad-4692-8ea9-db2798b90694</md:uuid>
+</metadata>
+  <content>
+    <para id="C1">The primary difference between "normal" and embedded C programming is that you will need to write directly to registers to control the operation of the processor.  Fortunately, the groundwork has already been laid for you to make this easier.  All of the registers in the ez430 have been mapped to macros by Texas Instruments.  Additionally, the important bit combinations for each of these registers have macros that use the same naming convention as the user’s guide.  Other differences from the C used on most platforms include:
+<list id="differences" list-type="bulleted">
+        <item>Most registers in the ez430 are 16 bits long, so an <code>int</code> value is 2 bytes (16 bits) long. </item>
+        <item>Writing to registers is not always like writing to a variable because the register may change without your specific orders.  It is always important to read the register description to see what the register does.</item>
+        <item>The watchdog timer will automatically reset the ez430 unless you set the register not to.</item>
+        <item>There is only a limited "standard out" system.  Standard out will typically print results to your computer screen.</item>
+        <item>Floating-point operations cannot be efficiently performed.  In general, you should avoid floating point decimal calculations on the ez430 because it does not have special hardware to support the complicated algorithms used.</item>
+      </list>
+    </para>
+    
+    <exercise id="exercise2.1">
+      <problem id="idp1223328">
+<title>Code Review</title>
+        <para id="breakpoints8">In this exercise, you may want to use some of the debugging tools (Breakpoints, Watch Window, Locals Window) to help you understand what the code is doing.  
+
+Start a new project.  Cut and paste the following code into main.c: 
+
+
+<code display="block" id="idm1564704">#include "msp430x20x3.h"
+
+void main(void){
+
+  int i,j,tmp;
+  int a[20]={0x000C,0x0C62,0x0180,0x0D4A,0x00F0,0x0CCF,0x0C35,0x096E,0x02E4,
+  0x0BDB,0x0788,0x0AD7,0x0AC9,0x0D06,0x00EB,0x05CC,0x0AE3,0x05B7,0x001D,0x0000};
+
+  for (i=0; i&lt;19; i++){
+    for (j=0; j&lt;9-i; j++){
+      if (a[j+1] &lt; a[j]) {
+        tmp = a[j];
+	a[j] = a[j+1];
+        a[j+1] = tmp;
+      }
+    }
+  }
+  
+while(1);
+}
+</code>
+
+
+<list id="brkpoint" list-type="enumerated"><item>Explain what this program is doing.  Why is the <code>while(1)</code> statement at the end of the code necessary for all programs we write at this point?</item>
+
+<item>Use any of the methods listed above to show the updated array.  What is the final result?</item>
+            
+<item>Modify the code so that it prints the final version of the array to standard out (you will have to use a loop of your choice to cycle through each element of the array).  What are the drawbacks and benefits of using <code>printf</code> over setting a breakpoint?</item></list>
+
+<note type="HINT" id="idp5249344"><label>HINT</label>To use the standard out, add the following line to the top of your code: <code display="block" id="idp4802368">#include "stdio.h";</code>Then, select <emphasis>Project-&gt;Options</emphasis>, the <emphasis>Library Options</emphasis> tab in <emphasis>General Options</emphasis>, and finally select <emphasis>Tiny</emphasis> in the <emphasis>Printf formatter</emphasis> drop down menu.  
+
+The <code>printf()</code> function will print to standard out (when the debugger is running, select <emphasis>View-&gt;Terminal I/O</emphasis>).  For example, <code>printf("x equals %d\n", x);</code> will print out the value of x to the window.  The <code>%d</code> means that x is a number, and <code>\n</code> will produce a line break.</note>
+
+        </para>
+      </problem>
+    </exercise>
+    <exercise id="exercise2.3">
+          <problem id="idp5172832">
+<title>Functions</title>
+            <para id="pro2">Multiplications and division are very complex operations to do on any microprocessor.  The operations should be avoided if possible or should be replaced with simpler, equivalent operations.  
+    
+<list id="syntax1" list-type="enumerated">
+
+<item>What do the operators &lt;&lt; and &gt;&gt; do?</item>
+<item>How could you use these operators to perform multiplication and division?</item>
+<item>Write the function <code>multiply(int x, int y)</code> that takes parameter <code>x</code> and multiplies it by <code>y</code> by using a bit shift.  It must return an <code>int</code>. For symplicity, it is OK to assume that <code>y</code> is a power of 2.</item>
+<item>Next, write the function <code>divide(int x, int y)</code> that takes parameter <code>x</code> and divides it by <code>y</code> by using a bit shift.  It must also return an <code>int</code>.</item>
+
+              </list>
+            </para>
+          </problem>
+    </exercise>
+    
+    <exercise id="exercise2.2">
+      <problem id="idm936496">
+<title>Digital I/O Registers</title>
+        <para id="pro1">Open the header file <term>msp430x20x3.h</term> by right clicking the name in your code and selecting <emphasis>Open "msp430x20x3.h"</emphasis> This file contains the macros and register definitions for the ez430 we are using.  Using the ez430 schematic, this header file, and ez430's User Guide please answer the following questions.
+<list id="questions1" list-type="enumerated"><item>The Watchdog Timer will automatically reset the hardware if it isn't periodically reset or disabled entirely.  Usually, we will simply disable it.  It can be disabled by writing to the <code>WDTPW</code> (watchdog timer password) and <code>WDTHOLD</code> (watchdog timer hold) section of the Watchdog Timer Control Register (<code>WDTCTL</code>).  Refer to <term>Section 7.3</term> of the User's Guide for more information.  Find the macros for this register in the header file.  How are they different from their description in the User's Guide?   Finally, write the C code required to disable it. </item>
+            <item>What are the differences among P1DIR, P1SEL, P1OUT, P1IN?</item>
+            <item>Some port pins have multiple functions to output and it is up to the user to select the appropriate signal.  Write some code that would select the alternate function of P2.2 (pin 2 of port 2).  What will the result be on our hardware? </item></list>
+        </para>
+      </problem>
+    </exercise>
+    
+    
+    
+    <exercise id="exercise2.4">
+      <problem id="idp181664">
+<title>Programming Digital I/O</title>
+        <para id="pro3">Write a program to blink SOS in Morse code repeatedly.  In Morse code SOS is S:"..." O:"---" S:"..." where each '.' is a shorter blink and a '-' is a longer blink.  According to <link url="http://en.wikipedia.org/wiki/Morse_code">The International Morse Code Standard (on Wikipedia)</link> the relative lengths of times between dots and dashes are as follows:
+<list id="instructions"><item>The amount of time of a dash is equivalent in length to 3 dots.</item>  
+<item>The amount of time between parts of a letter is equivalent in length to one dot.</item>
+<item>The amount of time between letters is equivalent in length to 3 dots.</item>
+<item>The amount of time between words (assume each SOS is a word) is equivalent to 5 dots.</item></list> 
+Make the delays (time length of a dot) by using a for-loop that counts to a large enough value.  
+  
+
+<note type="HINT" id="idp1414144"><label>HINT</label>Make sure you disable the watchdog timer at the very beginning of the program.
+          </note>
+</para>
+      </problem>
+    </exercise>
+  </content>
+</document>

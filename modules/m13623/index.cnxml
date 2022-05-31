@@ -1,0 +1,113 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:md="http://cnx.rice.edu/mdml">
+	<title>1.3 - Introduction to Programming the ez430</title>
+	<metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>ba2d86f6-fc36-4d4f-9d4e-8becb48da373</md:uuid>
+</metadata>
+<content>
+<section id="s1">
+<title>Configuring Digital I/O: Introduction</title>
+<para id="p1">Digital I/O, such as the LED, is configured by modifying several registers pertaining to the port that they are attached to.  Check the datasheet to find the respective port number of the peripheral you which to control.  For more detailed information about Digital I/O on the MSP430 check <term>Chapter 6: Digital I/O</term> of the ez430's user guide.  The basic logic behind seemingly trivial process of turning the LED on and off is the same behind the operation of every peripherial on the tool.    </para>
+
+<para id="p2">
+First, we must assign the direction of the corresponding I/O pins.  This is done by setting the direction register, <term>PxDIR</term>, with the appropriate bit.  By default, all I/O pins are assigned to be inputs.  
+<list list-type="bulleted" id="element-489"><item>Bit = 0: The port pin is switched to input direction. </item>
+<item>Bit = 1: The port pin is switched to output direction.</item>
+</list>
+</para>
+<para id="p3">On the ez430 the LED is located on port 1.  The port number will correspond the to x value in registers such as <term>PxIN</term>, <term>PxOUT</term>, or <term>PxDIR</term>.  Therefore, if we wanted to define the direction of a pin on port 1 we would write to <term>P1DIR</term>. 
+			</para></section>
+<section id="logicoperators">
+<title>A Useful Tangent: Common Bitwise C Operations</title>
+<para id="element-164">In order to modify values of registers you must first understand the following commonly used C logic operations:<code display="block" id="idp9101040">~A
+A | B
+A &amp; B
+A ^ B
+A |= B
+A &amp;= ~B
+A ^=B
+</code></para><para id="element-531">In C, the NOT: <code>~</code>, OR: <code>|</code>, AND: <code>&amp;</code> and XOR: <code>^</code>  operators are all bitwise.  This means that the  operations are done bit by bit to the binary values of the two operands. <note id="idp9091040">The prefix "0b" to a number means that that number is binary.  Similarly an "0x" prefix means that the number is hexadecimal.</note>Here are examples of the bitwise operations: <code display="block" id="idm809488">int A = 0b1101;
+int B = 0b0101;
+int C; 
+
+/*
+The results of these operations are very straightforward.  If we are dealing with the "|"
+operator then we OR together each bit to make the result. This means 0b1101 | 0b0101 is 
+computed as [1 OR 0, 1 OR 1, 0 OR 0, 1 OR 1] which is [1,1,1,1] thus the result is 0b1101;
+*/
+
+C = ~A;    // The value of C is 0b0010
+C = A | B; // The value of C is 0b1101
+C = A &amp; B; // The value of C is 0b0101
+C = A ^ B; // The value of C is 0b1000
+</code></para><para id="element-862">Operators such as <code>+=</code> or <code>-=</code>, implemented as <code>A += B</code>, are short forms for <code>A = A + B</code>.  This is translated to "take the current value of A, add it to B, and finally store that result back into A."  For <code>-=</code> it similarly translates to "subtract B from A and store the result back to A."  If "@" is some operator, than <code>A @= B</code> would be "@ together A and B and store the result back into variable A."</para><para id="element-710">If we combine the use of these two aspects of C then the aformentioned logic operations that are listed at the top of this section begin to make sense.  The following examples will help you figure out why they are useful to us when we attempt to configure any register on our microcontroller.  It is imperative that you understand how these function.  You will use them in every program you write because these operations allow you to modify single bits of a register to modify a specific register and change a peripheral's settings.    </para></section>
+
+<section id="s1a">
+<title>Configuring Digital I/O: Examples</title>
+<exercise id="ex1">
+				<problem id="idp6852960">
+					<para id="p4">How do we switch the pin (P1.0) corresponding to the LED to be an output?
+          </para>
+				</problem>
+				<solution id="idm329904">
+					<para id="p5"><code display="block" id="idp5252656">P1DIR |= 0x01;</code>
+
+0x01 in hex is equivalent to 0b00000001 in binary. You may refer to the module about <link document="m12796">Binary and Hexadecimal Notation</link>  to learn how to do this conversion or you could use the Windows Calculator (<emphasis>Start-&gt;Run...-&gt;'Calc'</emphasis>) to do it quickly. We can now easily see that P1.0 is set to 1 which makes it an output.   <note type="HINT" id="idp8753136"><label>HINT</label>Remember to use <code>|=</code> instead of just <code>=</code> because it won’t overwrite bits that are not set to 1 in the mask.</note>
+          </para>
+				</solution>
+			</exercise>
+			<para id="p6">Output pins may be toggled using the <term>PxOUT</term> register.  The LED is turned on by setting its corresponding register bit <emphasis>high</emphasis>.  
+      </para>
+			<exercise id="ex2">
+				<problem id="idp9974800">
+					<para id="p7">What code would turn on the LED without modifying any other bits in the register?  What would turn it back off?
+          </para>
+				</problem>
+				<solution id="idp8316608">
+					<para id="p8a"><code display="block" id="idp5345216">P1OUT |= 0x01;     //Turns LED On
+P1OUT &amp;= ~0x01;    //Turns LED Off
+</code>
+
+This will turn on and turn off the LED assuming it had already been set to be an output.<note id="idp8273200">~0x01 = 0xFE = 0b11111110</note>
+					</para>
+				</solution>
+			</exercise>
+			
+			<exercise id="ex3">
+				<problem id="idp8550544">
+					<para id="p8">What would be the proper syntax for toggling the value of P1.0 so that we can turn the light on if it is off or vice versa?
+					</para>
+				</problem>
+				<solution id="idm167408">
+					<para id="p9"><code display="block" id="idp6207248">P1OUT ^= 0x01;</code>
+
+The XOR operation will invert the bit in question so that we may toggle it regardless of its current state.  If this doesn't make sense, do the computation by hand to see how that single bit is flipped.
+					</para>
+				</solution>
+			</exercise>
+			<exercise id="ex5">
+				<problem id="idp6933920">
+					<para id="p10">Now, write the full C program to turn on the LED.  Do the following:   
+
+<list id="stepsforcode" list-type="enumerated"><item>Create a new project in Workbench as previosuly described</item>
+<item>Do <emphasis>not</emphasis> delete the default code in the main.c file except for the <code>return 0;</code>, which is not necessary.  All of your programs will use this as a skeleton</item>
+<item>Include the correct header file by adding the following line at the top of the main.c file: <code display="block" id="idp173216">#include "msp430x20x3.h";</code></item>
+<item>Consider defining macros for commonly used register values.  For example, if we add <code>#define led_on ~0x01</code> to the top of the file (after the <code>#include</code>) we may call <code>led_on</code> every time we wanted the value ~0x01.  Similarly we may add <code>#define led_off 0x01</code> to use when we wanted 0x01.</item>
+<item>Complete the program.  It is as simple as it seems; no more than two lines of code in the main function are necessary</item></list></para>
+					
+					
+					
+					
+				</problem>
+				<solution id="idp6754368">
+					<para id="p15"><code display="block" id="idm24656">#include "msp430x20x3.h"
+
+void main(void)
+{ 
+   P1DIR |= 0x01;	// Set P1.0 as output
+   P1OUT |= 0x01;	// Set P1.0's output value as high (turns the LED on)
+}		</code>
+					</para>
+				</solution>
+			</exercise>
+		</section>
+	</content>
+</document>

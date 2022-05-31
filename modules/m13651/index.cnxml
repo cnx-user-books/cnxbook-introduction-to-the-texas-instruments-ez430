@@ -1,0 +1,51 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>4.2 - Timers</title>
+  <metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>7a6fd803-6fd0-46f3-9197-b529c27342b2</md:uuid>
+</metadata>
+
+  <content>
+    <para id="p1">The Timer systems on the ez430 are a versatile means to measure time intervals.  The timer (called Timer A) can measure the timing on incoming signals or control the timing on outgoing signals.  This function is necessary to meet arbitrary timing requirements from outside components, and the ability is useful in phase locking scenarios etc.  The Timer system is one system (and the most common system) to make use of interrupts  Interrupts and Timers are bing introduced in tandem to illustrate this operation although they are seperate entities.    
+    </para>
+    
+    <para id="p2">The most basic operation of the timer systems is that the counter in the module increments for each clock cycle.  The timer clocks can be sourced from any of the clock lines discussed in Lab 3.  The incoming source can be divided down by multiples of two before entering the counter.  The user’s guide for the MSP has good diagrams on the architecture of the system in the respective sections for the timer.  Below the features and uses of Timer A are outlined.
+    </para>   
+    
+    <section id="p3">
+      <title>Timer A Modes</title>
+      <para id="p4">Timer A is a flexible system; the main counter can vary its counting pattern among several options with the MCx bits of the Timer A Control Register TACTL.  These modes are:
+        <list id="l1" list-type="enumerated">
+          <item><term>Stop:</term> the counter is not running</item>
+          <item><term>Up:</term> the counter counts upward from zero to the value in Timer A Compare Latch 0 (TACL0).  When it gets to this value, it resets to zero.  If the TACL0 value is larger than the maximum value of the Timer A counter, the counter behaves as if it were in Continuous mode.</item>
+          <item><term>Continuous:</term> the counter counts from zero to the maximum value of the Timer (0xFFFF).  When the counter reaches this value, it resets to zero.</item>
+          <item><term>Up/down mode:</term> the counter counts up to the value in TACL0 then counts back down to zero (as opposed to resetting directly to zero).  If the TACL0 value is larger than the maximum value of the Timer A counter, the counter behaves as if it were in Continuous mode.</item>
+        </list>
+      </para>
+    
+      <para id="p5">
+        Please note that the word count is used above- if the timer is set to a certain number it will not trigger anything.  The timer must count from the number below to the target number to trigger effects. 
+      </para>  
+    </section>      
+    
+    <section id="s2">
+    <title>Timer A Capture Compare Register 0</title>
+      <para id="p6">There are 2 capture compare registers in Timer A.  While there is only one counter for both modules, they can each interpret the count independently.  The most important module is module 0 because it controls the timer with its TACL0 register.  Primarily it controls rollovers, but it also has its own dedicated interrupt.  Setting this module up correctly is essential for desired operation of Timer A.
+      </para>
+    </section>
+    
+    <section id="s3">  
+    <title>What is Capture/Compare?</title>
+      <para id="p7">A capture is a record of the timer count when a specific event occurs.  The capture modules of the timers are tied to external pins of the ez430.  When the control registers of Timer A and the specific capture compare module have been properly configured, then the capture will record the count in the timer when the pin in question makes a specific transition (either from low to high or any transition).  This capturing event can be used to trigger an interrupt so that the data can be processed before the next event.  In combination with the rollover interrupt on Capture module 0, you can measure intervals longer than 1 cycle.  
+      </para>
+      <para id="p8">
+        A compare operation is less intuitive than the capture, but it is basically the inverse of a capture.  While capture mode is used to measure the time of an incoming pulse width modulation signal (a signal whose information is encoded by the time variation between signal edges), compare mode is used to generate a pulse width modulation (PWM) signal.  When the timer reaches the value in a compare register, the module will give an interrupt and change the state of an output according to the other mode bits.  By updating the compare register numbers, you change the timing of the signal level transitions.
+      </para>
+      <para id="p9">This may sound somewhat complicated, but the basic concept of measuring (input) or controlling (output) the time interval between high to low and low to high transitions is all you need to know to start with.  The MSP capture/compare modules have many different ways to perform each operation.  This can be somewhat overwhelming, but it allows the microprocessor to handle inputs from a greater variety of other components.  Capturing and comparing are done with the same modules, and each one can be configured individually.  They can also be grouped using the TACTL to trigger the capture compare registers to load simultaneously (useful for compare mode).  The ez430 User’s Guide fully details the behavior of the modules and the registers that control them.
+      </para>
+    </section>
+    <section id="s4">
+      <title>Timer Interrupts</title>
+      <para id="p10">There are two interrupts related to timer A.  One interrupt is dedicated to capture compare module 0; and, depending on configuration, it fires when the counter rolls back to zero.  The second interrupt handles all of the modules except for the first one, and fires to indicate that the module has captured or compared as explained above.  Here this simply means the interrupt handles the second module. However, in other devices that have more capture/control registers, this interrupt would handle this entire set of modules.  Each module can be individually masked or enabled, and a special register stores which module caused the interrupt.  As with all maskable interrupts, setting the general interrupt enable is necessary to receive them.  The interrupts are important in being able to perform complex operations as new data arrives.
+      </para>   
+    </section>
+  </content>  
+</document>

@@ -1,0 +1,46 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:md="http://cnx.rice.edu/mdml">
+	<title>3.3 - Lab 3: Clocking on MSP430</title>
+	<metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>f3e51cd1-f8a1-402e-ab05-4b29cc1ae24a</md:uuid>
+</metadata>
+	<content>
+		
+			<para id="element-430">The following exercise will show you how to manipulate the clocking system on the ez430. You will need to refer to the ez430's Schematic and User's Guide to correctly configure the clock as specified.</para>
+<exercise id="exercise1">
+<problem id="idp8146832"><title>Clock Setup</title>
+<para id="p3">
+In order to easily check the state of the clock, output MCLK/SMCLK (they are both defaulted to the same source) from a pin header (HINT: Output the SMCLK from P1.4 on pin 6).  Use the oscilloscope to observe the frequency of the clock, and to see the impact of the changes you will make.
+<list list-type="enumerated" id="list1"><item>Without modifying the clock registers any further, at what clock rate is the
+processor running at?  How is the clock currently configured in order to produce this built-in clock signal?  In other words, what is the clock's source and how is the source configured?</item>
+<item>Write code that sets the DCOCLK to operate at 8MHz.  You should be able to do it in just two lines of code.  We will use this clock setup for all future programs unless otherwise noted.   
+</item>
+<item>
+Using your new (8MHz) timer settings and your SOS light system from Lab 1, modify the code so that each "dot" and "dash" delay is for approximately the same ammount of time.  Basically, generate the same behavior as the original version but using the new clock settings.  What were the original (much slower) settings for the clock?  What was changed in order to keep the original blink rate?
+
+</item></list>
+
+     
+					</para>
+				</problem>
+			</exercise>
+
+
+			<exercise id="ex2">
+<problem id="idp8582944">
+<title>VLO Clock Setup</title>
+<para id="p4">The following is code to set the MSP430 to operate off of the VLO clock.  The only problem is that it doesn't work.  Macro definitions and logic operations are incorrectly used (although the comments are correct).  Without adding or removing any lines of code, properly source the MSP430 off the VLO clock.  
+
+<code display="block" id="idp7538592">WDTCTL &amp; ~WDTPW + WDTHOLD;              // Stop watchdog timer
+BCSCTL1 |= LFXT1S_2;                    // LFXT1 = VLO
+IFG1 = OFIFG;                           // Clear OSCFault flag
+__bis_SR_register(SCG1 + SCG0);         // Stop DCO
+</code>
+Now using these timer settings, repeat number 3 from this lab's problem 1.  
+
+         </para></problem>
+			</exercise>
+
+
+			
+		
+	</content>
+</document>

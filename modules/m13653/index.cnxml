@@ -1,0 +1,42 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:md="http://cnx.rice.edu/mdml">
+	<title>4.4 - Lab 4: Timers and Interrupts</title>
+	<metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>fb7ccbf9-1a01-4ad7-8fb4-fc6889a05894</md:uuid>
+</metadata>
+	<content>
+		<para id="p1a">In this lab, we will cover the timing options for the ez430.  The first part explains the clocking system of the processor and the options it allows while the second part covers the timers and timer interrupts available on the ez430.  Each of these sections is strongly related to real time programming, but that topic will be dealt with separately in another lab. In general, a real-time application is one which responds to its inputs as fast as they happen.  The microprocessor is generally expected to take less time to handle an interrupt or stimulus than the time before the next event will happen.  The timer system is broken into two primary parts on the ez430 Timer A and the Watchdog timer. 
+      </para>
+		
+			
+			
+			<exercise id="exercise5.1">
+        <problem id="idp1331424"><title>Timer A</title>
+					<para id="p4a">Refer to <term>Chapter 8: Timer_A</term> User's Guide to get a detailed description of all the options in Timer A.  Basically, setting up the timers requires that you define a source for the timer and to specify a direction for the count.  It may also be helpful to clear the timer register before you begin to guarantee and accurate count from the first instance.  Set up Timer A in Continuous Mode and sourced from SMCLK.  Set TACCR0 and TACCR1 to have two different values.  Output TA0 and TA1 from Pins 3 and 4 (off of P1.1 and P1.2) of the board so that you may directly observe the output of Timer A.  </para>
+          <para id="p1">Using two different channels of the Oscilloscope try to recreate parts of <term>Figure 8-13. Output Example- Timer in Continuous Mode</term>.  On Channel 1 show <term>Output Mode 4: Toggle</term> and on Channel 2 show <term>Output Mode 6: Toggle/Set</term>.  Vary the TACCTLx in order to get as close to the orginal figure as possible.  Take a screenshot of the scope and include it in your lab report.
+          </para>
+          
+
+
+
+          </problem>
+			</exercise>
+		
+		
+			<exercise id="e2">
+      <problem id="idp8083312"><title>Timer</title>
+			<para id="p6">Set up the timers to fire interrupts to calculate time intervals and redo the SOS problem from <link document="m13625">Lab 1</link> using the timer to simulate the "dot" and "dash" time intervals.  There should be <emphasis>NO COUNTING LOOPS</emphasis> in your program, and your program should be entirely interrupt driven.  It is possible to have each Capture Control Register to fire an interrupt once it reaches its max value.  Explain how you setup Timer A to simulate each time interval.  </para>
+        </problem>
+        </exercise>
+			<exercise id="exercise5_3"><problem id="idp7892816">
+<title>Duty Cycle</title>
+
+<para id="p8">We have discussed earlier that the Duty Cycle is related to the width of a pulse.  If we trigger an LED with a relatively high frequency square wave, it will appear to be lit constantly even though it is actually switching on and off quickly.  As we vary the duty cycle of our trigger signal, the LED may appear to get dimmer or brighter depending on which way we vary it.
+          </para>
+					<para id="p9">Set up the timer to toggle the LED.  Without changing the frequency of your timing pulse, change the duty cycle so that the LED appears to fade in and out.  The time it takes to go from completely off to max brightness shouldn't take more than a second, then it should repeat.  Once again, there should be no counting loops in your program, and you can use Timer A in any way you wish.  
+          </para>
+          <para id="p10">Once you get a single light to fade in and out, create another program with a function to set the LED at a certian brightness level when given atleast a 12 bit integer.  For example, if I were to call <code>LED_level(0x111)</code>, the LED should appear very dim; if I were to call <code>LED_level(0xFA0)</code>, the LED should appear very bright.  It may be helpful to have an extra function that initializes the Timer settings so that the use of this application is self contained.  In the future, we will use this function to provide visual feedback when using other components.  
+          </para>
+				</problem>
+			</exercise>
+		
+	</content>
+</document>

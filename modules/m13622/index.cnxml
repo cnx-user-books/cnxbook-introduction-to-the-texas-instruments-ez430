@@ -1,0 +1,116 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>1.2 - Introduction to the IAR Workbench IDE</title>
+  <metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>ed5ca2cf-3d7e-44ec-8a50-b038159d40af</md:uuid>
+</metadata>
+
+  <content>
+    
+
+    <section id="Goals">
+    <title>Goals</title>
+    <para id="Motivations">To develop applications to run on the ez430 chip, we use the IAR Embedded Workbench IDE (integrated development environment).  Not only does this application provide a powerful code editor, but it also allows a simple one-click deployment of the source code onto the MSP chip using USB as well as hardware debugging capabilities that allow you to trace through actual stack calls.  This module is intended to give you an introduction to the IAR Workbench application so that you may create and develop your own ez430 applications.    
+    </para>   
+    </section>
+
+    <section id="createproject">
+    <title>Create a Project</title>
+    <para id="createwizard">The very first thing you must do before you can start downloading any code onto the MSP, is to create a project in Workbench that will contain all of the relevant files for your application.  When you open Workbench you should see the following window (This window is equivalent to selecting <emphasis>File-&gt;New-&gt;Workspace</emphasis> and then <emphasis>Project-&gt;Create New Project</emphasis>.  This window may also be reached through Help-&gt;Startup Screen):
+
+   
+    <figure id="beginingwindow">
+      <title>Startup Screen</title>
+      <media id="idp6994000" alt=""><image src="../../media/1beginingwindow.png" mime-type="image/png"/></media>
+      <caption>
+      Select "Create new project in current workspace" to begin.  
+      </caption>
+    </figure>
+
+Next, the following window will appear:
+
+    <figure id="projectselectwindow"><title>Project Template Selection</title>
+      <media id="idp8255632" alt=""><image src="../../media/2projectselectwindow.png" mime-type="image/png"/></media>
+      <caption>
+      Here we select the language in which we shall write our code.  Select the 'C' file and then the 'main' option.  In one lab, we will program in assembly; for that lab, select the "asm" option.  
+      </caption>
+    </figure>
+
+
+Now a Windows Save dialog should appear.  Give your project a name and save it in its own <emphasis>seperate folder</emphasis>.  A project is not only a C file that contains your code but also several other files (a project file with the ".eww" extention, a project settings folder, a debug folder which contains compiled code outputted by Workbench etc).  Keeping the files for your current project in their own folder will help you stay organized.  If you save and close your project, opening it again is as simple as opening this folder, and doubleclicking on the Workbench project file, which has a ".eww" extention.    </para> 
+</section>
+
+<section id="configProject">
+  <title>Configure Project Options</title>
+    <para id="OptionSetup">Now, we must configure the project options.  Make sure the project is selected in the "Files" pane to the left of the screen (the project is the top of the workspace's file tree).  Then select <emphasis>Project-&gt;Options</emphasis> to get the following screen and make the indicated selections: 
+ 
+      <figure id="optConfigGen"><title>Project Options Setup: General Options</title>
+      <media id="idp7970496" alt=""><image src="../../media/3optionssetupwindow.png" mime-type="image/png"/></media>
+      <caption>
+      Make sure you choose the right processor for your application!  Here, I've selected the MSP4302013 (a member of the ez430 series) since that is the chip I plan to use.     
+      </caption></figure>
+
+Now select the "Debugger" option and make the following selections:
+
+<figure id="optConfigDebug"><title>Project Options Setup: Debugger</title>
+      <media id="idp7639168" alt=""><image src="../../media/4optionsetupdebug.png" mime-type="image/png"/></media>
+      <caption>
+      Here we must select to use the FET (Flash Emulation Tool) Debugger to run our code.      
+      </caption></figure>
+
+Finally select the "FET Debugger" option and make the following selections:
+   
+<figure id="optConfigFET"><title>Project Options Setup: FET Debugger</title>
+      <media id="idp10504368" alt=""><image src="../../media/5optionsetupFETdebugger.png" mime-type="image/png"/></media>
+      <caption>
+      Now we select the "Verify Download" check box and the "TI USB FET" radio button (while leaving other options as they are) so that our program is properly transferred to the chip.   
+      </caption></figure>
+
+Your project is created, saved, and now you may write your code.  Only one project may be open at a time.  </para>
+    </section>
+
+    <section id="addfiles">
+    <title>Adding Files to the Project</title>
+    <para id="addfilesproj">If your project consists of more than one file, you will need to add it to the current project.  To add a file to your project, choose <emphasis>Project-&gt;Add Files</emphasis>.      </para>
+    </section>
+
+
+
+
+
+
+    <section id="runprogram">
+    <title>Run Your Program!</title>
+    <para id="startdebug">This is the part you've been waiting for:  actually testing your program!  Use the <emphasis>Project-&gt;Debug</emphasis> menu item to load the currently active project and set your program running.  You can also set any breakpoints beforehand; by default, the very first line of executed code is set as a breakpoint.  Now that you have started the debug process, the layout of the Workbench program changes slightly.  A Debug menu and the "Disassembly", the assembly/machine code instructions at their specific memory addresses on the ez430, appear.  To continue the execution of the program, select <emphasis>Debug-&gt;Go</emphasis>.  If you would like to set breakpoints (in order to view the "path" of program execution or the values of specific variables or registers at a certain point during the program execution) click to the left of a line of code such that a red 'X' appears. 
+    </para>
+
+    <para id="pause">You can pause the debugger when the target is running if you would like to look at the value of certain variables.  Select <emphasis>Debug-&gt;Break</emphasis> and open a watch window to examine the value of certain variables.  It is suggested that you copy the variables you are interested in to temporary global variables.  Because local variables go out of scope, it is uncertain if their correct value is maintained when the debugger is paused.  
+    </para>
+
+    <para id="stop">Debugging can be stopped using <emphasis>Debug-&gt;Stop</emphasis>.  At this point, the watch window will not display your variable values.  At this point, you may make any modifications to your program as necessary and restart the debugger from the beginning.  
+    </para><para id="element-283">All of the necessary commands have shortcut icons as the following diagram shows:
+
+<figure id="shortcut">
+<title>Workbench: Debug View</title>
+      <media id="idp12981008" alt=""><image src="../../media/toolbarAfter.png" mime-type="image/png"/></media>
+<caption>The program layout during debugging</caption>
+</figure>
+
+
+<term>Legend:</term>
+
+<list list-type="enumerated" id="legend"><item><term>Make/Debug</term>- This button will compile, load, and run the code onto the chip.  This process happens rather rapidly so if the execution of this seems to hang, then something is wrong.  Usually disconnecting the tool and/or restarting Workbench solves this problem.  Don't forget to save first!</item>
+<item><term>Go</term>- This button is for the Go command in the debug menu; it tells the program to continue execution until the next breakpoint.  The buttons to its left are other ways of traversing through breakpoints that you may experiment with.</item>  
+<item><term>Stop Debug</term>- Selecting this will end the debugging process.  If you want to modify your code then you must stop debugging first.</item>
+<item><term>Dissassembly</term>- This is a map of the memory space of the ez430 and where your code has been placed (in its compiled form).</item> 
+<item><term>Current Location</term>- The Green Arrow/Green Highlighting indicates the current instruction being executed.</item>  </list>
+</para>
+    </section>
+
+    <section id="go">
+    <title>Good luck!</title>
+    <para id="goodluck">You're all set to start using the CrossStudio compiler to write embedded microcontroller code.  Save often and remember that disconnecting and reconnecting or  restarting the program will solve almost all interface problems that you encounter.  Don't worry if breakpoints seem a little confusing now.  We will go into more depth shortly and a good bit of practice is necessary to use them effectively.      
+    </para>
+    </section>
+
+  </content>
+  
+</document>

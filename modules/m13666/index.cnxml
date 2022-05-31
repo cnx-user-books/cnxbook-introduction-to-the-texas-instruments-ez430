@@ -1,0 +1,52 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>5.1 - Memory Conservation</title>
+  <metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>ab8a3428-2ddf-4c2d-8723-6c01a6aa0e79</md:uuid>
+</metadata>
+
+    <content>
+ 
+    <para id="p1">In the early days of computers, the instruction memories of main frames were incredibly small by today's standards, only in the hundreds or thousands of bytes.  This small capacity emphasized making each instruction count and each value saved necessary.  Fortunately, just as processors have exponentially increased in speed, program memory has similarly increased in capacity.  Even though it seeme like there is an abundance, there are still general practices that must be kept in mind when using program memory.  Also, smaller platforms, like microcontrollers, are still limited to memory capacities in the kilobytes.  This module explains the kinds of memory, common memory organizations, and the basics of conserving memory.  
+    </para>
+
+    <section id="s1">
+      <title>How memory is organized</title>
+      <para id="p2">In most memory architectures there is some categorization of memory into parts.  The basic principle behind this is that seperate sections of memory can serve specific purposes while each section can be more efficiently accessed. Types of memory include the following:
+<list id="mem"><item>
+        <term>Instruction Memory</term> is a region of memory reserved for the actual assembly code of the program.  This memory may have restrictions on how it can be written to or accessed because frequent changes to an application's instruction are not expected.  Because the size of instruction memory is known when the program compiles, this section of memory can be segmented by hardware, software, or a combination of the two.   
+      </item>
+      <item>
+        <term>Data Memory</term> is a region of memory where temporary variables, arrays, and information used by a program can be stored without using long term memory (such as a hard disk).  This section of memory is allocated during the course of the program when more memory for data structures is needed.
+      </item>
+      <item>
+        <term>Heap Memory</term> is an internal memory pool that tasks dynamically allocate as needed.  As functions call other functions, it is necessary that the new (callee) function's data be loaded into the CPU.  The previous (caller) function's data must be stored in the heap memory so that it may be restored when the callee function is finished executing.  The deeper function calls go, the larger the heap portion of memory needs to be.  
+      </item>
+
+</list>
+
+Often, the heap memory and the data memory compete directly for space while the program is running. This is because both the depth of the function calls and the size of the data memory can fluctuate based upon the situation. This is why it is important to return the heap memory the task uses to the memory pool when the task finishes.</para>
+
+      
+    </section>
+    <section id="s2">
+      <title>Memory Allocation in Languages</title>
+      <para id="p7">
+        The organization of memory can vary among compilers and programming languages.  In most cases, the goal of memory management systems is to make the limited resource of memory appear infinite (or at least more abundant) than it really is.  The goal is to free the application programmer from having to worry about where his memory will come from.  In the oldest days of mainframes, when each byte of memory was precious, a programmer might account each address in memory himself to ensure that there was enough room for the instructions, heap, and data.  As programming languages and compilers were developed, algorithms to handle this task were developed so that the computer could handle its own memory issues.  </para>
+      <para id="p8">Today, even assembly programmers do not have to worry about memory allocation because current assemblers can handle that task.  Memory allocation algorithms are good enough at their job that it isn't worth a programmer's time to manually allocate memory.  There are a few different ways that languages solve the problem of memory allocation.  In general, it is simply a matter of providing the programmer with memory that is known to be required at compile time including space for global data values and the code itself.  The more difficult problem is how to provide flexible data memory that may or may not be needed when the program actually executes.</para>
+      <para id="p9">The approach that C takes is to make available to the the programmer special functions that manage memory allocation.  These methods are called <code>malloc(int) </code> (memory allocate) and <code>free(void *) </code>. The basic idea is that whenever the programmer needs a specific amount of additional memory, he calls <code>malloc(int)</code> with the integer being the number of bytes of memory needed.  The function returns a pointer  to a block of memory of the requested size.  When the programmer is done with a particular block of memory, he may call <code>free(void*)</code> to let the memory management library know that the particular block of memory isn't needed anymore by passing the pointer to that block to the function.  If the programmer is diligent about returning (freeing) memory that isn't needed anymore, then he will enjoy an abundant supply of memory without having to count individual bytes.  On the other hand, if a programmer repeatedly requests memory but does not free the memory back to the system, the memory allocator will eventually run out of memory and program will then crash.  Thus, it is essential for passages of code that frequently request memory allocations to free these allocations as quickly as they can.  Un-freed memory blocks are not fatal in very infrequently executed parts of code; however, the longer a program runs, the more potential there is for a problem.  In general, a program that allocates but does not free memory, is said to have a<term> memory leak</term>.  </para>
+      <para id="p10">Other languages handle the problem of memory allocation automatically.  Java allocates the memory for new data on the fly using the keyword <code>new</code> instead of the function <code>malloc</code>, but the more important difference is that freeing takes place automatically.  Part of the Java system called the <term>garbage collector</term> detects memory that can be safely freed and does so.  In this manner, Java programs do not suffer memory leaks in the way a C program might.</para>
+    </section>
+    <section id="s3">
+      <title>Memory and the MSP</title>
+      <para id="p11">In the ez430 there is no inherent difference between instruction memory, data memory, and heap memory.  The only subdivisions in memory are the blocks of flash and the sections of RAM.  Any of these sections can hold any type of memory; however, because it is problematic to erase and rewrite flash in the middle of program execution, the flash memory is best saved for instructions and constants.  The remaining RAM must be shared then between the heap, the dynamically allocated memory, and the global variables.  On the ez430, there is only 2KB of RAM, so no memory leaks are tolerable. </para>
+    </section>
+    <section id="s4">
+      <title>How memory is wasted or conserved</title>
+      <para id="p12">The most notable way to waste memory, memory leaks, have already been discussed, but there are several others.  While memory leaks abuse the dynamically allocated portion of data memory, many layers of function calls abuse the heap.  Above, it was explained that each time a function calls another function, the caller's registers and data are moved onto the heap.  If each called function calls another function in turn, then the heap portion of the memory will grow significantly.  For high power computing systems, this is not usually a great threat to the overall supply of memory compared to other memory leaks.  Embedded systems, however, must avoid deep layers of function calling or risk exhausting the overall supply of memory.  </para>
+      <para id="p13">There is a programming technique called recursion, which uses deep layers of function calling, where a function calls itself repeatedly on progressively smaller or simpler versions of the data until the answer is trivial (a base case).  While this technique leads to some very clever solutions to some complex problems, it is uses large amounts of memory to achieve this end.  Therefore, recursion is generally a poor choice when dealing with microcontrollers.  
+      </para>
+      <para id="p14">Another way to waste memory is to create too many global variables.  Specifically, variables whose scope could be local to a function or that could be allocated dynamically waste memory because they take up space even when not in use.   
+      </para>
+    </section>
+    <!-- CUT OUT FIBONACCI PROBLEM  -->
+  </content>
+</document>

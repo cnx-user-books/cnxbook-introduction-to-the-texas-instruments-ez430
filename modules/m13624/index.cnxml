@@ -1,0 +1,28 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>1.4 - Setting Breakpoints in Workbench</title>
+  <metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>3f2c52d7-7b38-4756-9771-a04cae5f2685</md:uuid>
+</metadata>
+
+  <content>
+<para id="breakpoints1">
+C with an embedded controller does not have as many input-output (IO) features as a regular computer.  To help you debug, it will sometimes be necessary to stop the processor while it is running and examine the state of the system.  To accomplish this we will use <term>breakpoints</term>.  A breakpoint is a specific command to the development environment to stop execution of the processor when a certain condition happens.  These conditions range from when a certain instruction is reached to when certain data is written or read.  The advanced options are broad.  
+</para>
+
+<para id="breakpoints2">To set a basic breakpoint, one which will stop execution when a certain line is reached, just click on the left margin of the C file on the line you want to trigger. A red 'X' should appear to indicate you have set a break point.  Click once more to make it go away.  Workbench keeps track of all of the breakpoints for you.  To see this information go to <emphasis>Window-&gt;Breakpoints</emphasis>. This will pop up a list of all of the breakpoints you currently have enabled.  Right clicking in the window will allow us to create, delete, and modify breakpoints.  We will use the same terminology for breakpoints as the IAR environment does, but the usage is not standardized.  
+</para>
+
+<para id="breakpoints3">The most useful and important breakpoint is the the <term>code</term> breakpoint.  It triggers on arrival at a certain instruction in the source code.  This kind of breakpoint can be created simply by left clicking on the left margin of the line in question.  The breakpoint should then appear in the breakpoint window. Right clicking on the entry for a breakpoint allows you to edit it.  For all breakpoints, you may select that they only trigger on a certain iteration by editing the <term>skip count</term> field.  If left as 0, the breakpoint will trigger each time it occurs.  Entering a number into the skip count field will trigger the breakpoint on that numbered time the event occurs. 
+</para>
+
+
+
+
+
+
+
+<para id="element-999">In tandem with breakpoints, we can use the <term>Locals</term> and <term>Watch</term> windows. To access either of these windows select <emphasis>View-&gt;Locals</emphasis> or <emphasis>View-&gt;Watch</emphasis>.  Whenever the program pauses at a breakpoint, these windows will be updated with the proper current values.  The locals window displays the values for all local variables, variables within the function being processed,  that are currently being used.  The watch window displays values for variables that you add to it.  Right click any variable or macro directly in your code and select "Add to Watch."  Now, whenever your code pauses at a breakpoint, you can see the current value of that variable.   </para><para id="breakpoints7">Alternate explanations of breakpoints can be found in the help contents of the Workbench IDE.  </para>
+
+
+  </content>
+  
+</document>

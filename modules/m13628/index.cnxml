@@ -1,0 +1,72 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>2.3 - Lab 2: Introduction to Assembly Language</title>
+  <metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>7a551c78-765c-4b47-ad61-b48428f0508a</md:uuid>
+</metadata>
+
+  <content>
+<para id="lab3.1">In this lab you will be asked to write simple assembly statements, follow already written assembly statements, and finally to reproduce the SOS light blinking program from Lab 1 in assembly.  
+</para>
+
+
+
+<exercise id="exercise3.1">
+<problem id="idp2435152">
+<para id="pro1">
+Formulate instructions to do the following things:
+<list id="instructions" list-type="enumerated">
+<item>Set bit 3 to 1 at the memory address 0xd640  while leave bits 0-2 and 4-16 unaffected. </item>
+<item>Jump to the instruction labeled POINT if the carry bit is set. </item>
+<item>Shift register R6 right one place while preserving the sign.  </item>
+</list>
+</para>
+</problem>
+</exercise>
+
+<exercise id="exercise3.2">
+<problem id="idp6862576">
+<para id="loop">Examine this loop:
+<code display="block" id="idm6963472">
+... more instructions... 	
+Mov.w  &amp;I,  R4  
+Cmp.w  #0x0000, R4 
+JZ    After_loop
+
+Start_loop:
+Dec.w   #0x0001, R4	 
+JZ  After_loop
+BR #Start_loop
+
+After_loop:
+...more instructions...
+</code>
+<list id="loopques" list-type="enumerated">
+<item>How many times will this loop execute?</item>
+<item>Why do we use the BR instruction with a #Start_loop, but with the JZ we use a plain After_loop?</item>
+<item>What does the first JZ instruction do? If we did not have this initial Cmp and JZ, what (possibly) inadvertent effect might occur?</item>
+</list>
+</para>
+</problem>
+</exercise>
+
+<exercise id="exercise3.3">
+<problem id="idp1042240">
+<para id="element-136">Re-write the blinking light program from Lab 1 using assembly code instead. As you may recall, the program must blink "SOS" (which is "... --- ...") and conform to the following Morse Code standards:
+
+
+<list id="instructions1">
+<item>The ammount of time of a dash is equivalent in length to 3 dots.</item>  
+<item>The ammount of time between parts of a letter is equivalent in length to one dot.</item>
+<item>The ammount of time between letters is equivalent in length to 3 dots.</item>
+<item>The ammount of time between words (assume each SOS is a word) is equivalent to 5 dots.</item></list> 
+  
+  </para>
+
+</problem>
+
+
+
+</exercise>
+
+  </content>
+  
+</document>

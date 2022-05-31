@@ -1,0 +1,42 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>5.4 - Lab 5: Optimization and Low Power Modes</title>
+  <metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>6cee15da-3fa1-442a-ac7e-c42a930ceaec</md:uuid>
+</metadata>
+  <content>
+    <section id="s1">
+      <title>Low Power Modes and Code Optimization</title>
+      <exercise id="exercise1">
+        <problem id="idm5123760">
+<title>Fibonacci Optimization</title>
+
+          <para id="p3">The <term>Reducing Power Consumption</term> module discusses why it is important to keep power in mind when programming embedded devices. We have yet to consider this while programming the previous labs. Writing efficient code is the first step in improving power consumption, next we can disable all parts of the board that aren't currently being used. 
+          </para>
+          <para id="p9">
+          Take the following piece of code: 
+           <code display="block" id="idp3023584">long fibo(int n) 
+{
+  if (n &lt; 2)
+   return n;
+  else 
+   return fibo(n-1) + fibo(n-2);
+}</code>
+          It recursively calculate the nth number in a Fibonacci sequence recursively.  Recursion makes this piece of code easier to read, however, it is very inefficient and consumes far more memory than it has to.  If you try to compute a large number, say <code>fibo(50)</code>, then it will take much longer and will consume more power than it should.
+          </para>
+          <para id="p2">
+            The original program is very inefficient and wastes memory in several of the ways described in the inefficient <link document="m12006">Memory Conservation</link> module.  Modify the code to eliminate the memory waste and improve the speed of the program.  Note that there is a tradeoff between speed and memory (though at first the program is simply gratuitously wasteful).  What is the nature of the tradeoff?  Assuming the one addition takes one cycle to complete, how long would it take the original code to complete <code>fibo(50)</code>?  How long would it take your new, improved version?  Assume that you are only considering the addition operations.
+          </para>
+           </problem>
+      </exercise>
+      <exercise id="exercise2">
+        <problem id="idp989168">
+<title>Low Power Modes</title>
+          <para id="p10">Modify your project so that the processor remains in one of the low power modes whenever it is not doing any calculations. Wake up from the low power mode using a timer interrupt (change the timer settings so that there is a substantial time period between interrupts) and have your program compute <code>fibo(50)</code>.  You may want to make the program compute fibo(50) more than once so that the MSP is in the ISR performing an intensive task for longer and thus make it easier to read the current consumption value.  Output the result to the standard out display.  What is the result? (Hint: 12,586,269,025)   Make sure the result is correct number. As soon as the calculation is done, return to low power mode.  Perform the same process to calculate the current consumption during the use of your Fibonacci function.  You should have measured three current consumption values: 1) in the low power mode, 2) while processing <code>fibo(50)</code>, and 3) while processing the 50th Fibonacci number using your function.  
+ <note type="HINT" id="idp5202512"><label>HINT</label>A number must be small enough to fit in its given type.  If it is too large, you may get unpredictable results.  Try using a <code>long long</code> for extra huge numbers.  Because of our <code>printf</code> settings, we cannot output such large data types.  You must use bit-wise operations to separate the number into smaller chunks suitable for printing.  </note>
+From now on, instead of <code>while(1)</code> at the end of programs, simply place the tool into a low power mode.  This will allow future applications to more closely resemble and operate as real-world embedded programming.  </para>
+
+
+        </problem>
+      </exercise>
+    </section>
+  </content>
+</document>

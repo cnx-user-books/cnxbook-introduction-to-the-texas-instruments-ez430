@@ -1,0 +1,90 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>7.2 - Analog-to-Digital Converter on the MSP430</title>
+  <metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>9014f8a3-9065-45e7-9354-7ea1667a833e</md:uuid>
+</metadata>
+
+  <content>
+<para id="adc1">The analog to digital converter (ADC) on the ez430 is a type called a <term>Sigma-Delta (SD)</term> Converter.  The way it operates is slightly different from what was described in the previous section (although the end result is the same) but those specifics are out of the scope of this course.  The SD converter on the ez430 has 8 channels and a 16 bit resolution.   
+The module is highly configurable and can run largely free of program involvement. In this portion of the lab, we will broadly explain the features of the module, but the particular effects of each register are listed, as usual, in <term>Chapter 12</term> of the <term>User’s Guide</term>.  </para> 
+
+<section id="range">
+<title>Range of Measurement</title>
+<para id="range1">The result of each conversion will be 16 bits long in the form of an unsigned integer whose value is: 
+
+
+
+<equation id="sd16Formula"><m:math>
+    <m:apply><m:eq/>
+        <m:cn>SD16_MEMx</m:cn>
+            <m:apply><m:times/>
+	    <m:cn>(65,536)</m:cn>
+              <m:apply><m:divide/>
+                  <m:apply><m:minus/>
+                    <m:csymbol>Vin</m:csymbol>
+                    <m:csymbol>Vrneg</m:csymbol>
+                  </m:apply>
+              <m:apply><m:minus/>
+                    <m:csymbol>Vrpos</m:csymbol>
+                    <m:csymbol>Vrneg</m:csymbol>
+               </m:apply>
+              </m:apply>
+            
+           </m:apply>
+            
+   </m:apply>
+  </m:math>
+</equation>
+
+Where <term>Vin</term> is the input voltage to be measured, <term>Vrneg</term> is the lower reference voltage, and <term>Vrpos</term> is the higher reference voltage.  The reference voltages are set to power and ground by default, but they can be changed to an internal reference generator or an externally supplied reference using the <code>SD16CTL</code> register.  
+</para>
+</section>
+
+<section id="input">
+<title>Input Channels for the ADC</title>
+<para id="inp1">The following is a table of the 8 input channels on the ez430.  "Analog signal input" channels will take any analog source (we will get to the pin mapping's shortly).  Other channels perform specific tool integrated tasks.  For example, channel A6 is an integrated temperature sensor.  For detailed descriptions of the others, see the <term>User's Guide</term>.
+<list id="inpChannels" list-type="enumerated"><title>SD16 Input Channels</title>
+<item><term>A0</term>: Analog signal input</item>
+<item><term>A1</term>: Analog signal input</item>
+<item><term>A2</term>: Analog signal input</item>
+<item><term>A3</term>: Analog signal input</item>
+<item><term>A4</term>: Analog signal input</item>
+<item><term>A5</term>: <m:math>
+       <m:apply><m:divide/>
+            <m:apply><m:minus/>
+	    <m:csymbol>Vcc</m:csymbol>
+            <m:csymbol>Vss</m:csymbol>
+             </m:apply>
+              <m:cn>11</m:cn>
+                  
+           </m:apply>  
+  </m:math>
+
+</item>
+<item><term>A6</term>: Integrated temperature sensor</item>
+<item><term>A7</term>: Short for PGA offset measurement</item>
+
+</list>
+Here is a pin diagram corresponding to the 14 accessible pins showing which pins correspond to which input channels.  Notice that each channel has a "+" and a "-" input.  Although with other ADC's, we would simply have one input pin and connect the other to the ground, the SD converter requires us to connect the positive and negative inputs to the corresponding input channels.  Note that the numbers from 1-14 on the chip correspond to pins 1-14 on the target board.  
+
+ <figure id="pinMap"><title>Pin Map</title>
+      <media id="idm10374768" alt=""><image src="../../media/PinMap.png" mime-type="image/png"/></media>
+      <caption>
+      Shows which pins correspond to specific SD converter inputs.  Also shows which pins correspond to specific ports (i.e pin 4 is connected to P1.2). 
+      </caption>
+    </figure> </para>
+</section>
+
+<section id="operating">
+<title>Operation Reminders for the ADC</title>
+<para id="oper1">Remember the following when attempting to use the ADC:
+<list id="modes" list-type="bulleted">
+<item>Be sure to enable SD16 interrupts (on <code>SD16CCTL0</code>) and to select the specific channel which you are using (on <code>SD16INCTL</code>)</item>
+<item>After configuring the ADC, you must enable the <code>SD16SC</code> bit to start conversion.</item>
+<item>All ADC values will be stored in the <code>SD16MEMx</code> variable where "x" is the number of the channel</item>
+</list>
+The <term>User's Guide</term> will be very useful for this lab because of the complexity of this part of the MSP430.  Be sure to go over the chapter atleast briefly before jumping into programming.  </para>
+</section> 
+
+  </content>
+  
+</document>

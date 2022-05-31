@@ -1,0 +1,31 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>3.2 - Clock System on the ez430</title>
+  <metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>badbd34e-a12c-462c-ad0a-abfb05f5ceba</md:uuid>
+</metadata>
+
+  <content>
+<para id="clock1">The clock system on the ez430 is designed to be flexible and low powered.  The implementation of these goals is largely based on the ability to select different clock speeds for different parts of the chip.  By choosing the minimum clock speed necessary for a given module, power consumption is reduced and the particular synchronization needs of the module can be met. 
+</para>
+
+<para id="clock2">Our ez430 technically has two main clock sources for the clocking system, and three clock lines that chip systems can choose between. The clock sources are used as the basis for the clock lines, and this allows for a mix of slow and fast clocks to be used around the system. Currently, without modification, our tool only supports one.<list id="sources" list-type="enumerated"><title>Clock Sources</title><item><term>Low Frequency Crystal Clock (LFXTCLK)</term> – This clock is sourced from an external crystal (with an intended oscillation of ~32kHz) that does not exist by default on the ez430.  Theoretically, we could attach the crystal to the XIN/XOUT pins and be able to use this as a clock source although such a procedure is not necessary for this course.  This crystal would be the source of the <term>Auxiliary Clock (ACLK)</term>, one of the three clock lines discussed below</item>
+<item><term>Digitally Controlled Oscillator Clock (DCOCLK)</term> – this is the only internally generated clock input, and it is the default clock source for the master clock upon reset.  By default this clock runs at about 1MHz, but the RSELx, MODx, and DCOx  bits allow this to be divided down or even blended to achieve a lower clock frequency on average.  <term>Chapter 4</term> of the User's Guide outlines specific ways to configure the DCOCLK to operate at the desired frequency.</item>
+</list>
+
+
+<list id="lines1" list-type="enumerated"><title>Clock Lines</title><item><term>Master Clock (MCLK)</term> – This clock is the source for the MSP CPU core; this clock must be working properly for the processor to execute instructions.  This clock has the most selection for its source.  The source is selected with the SELMx bits of the Basic Clock System Control Register 2 (BCSCTL2). The divider is controlled with the DIVMx of the BCSCTL2.  Finally, the CPU can be turned off with the CPUOFF bit of the Status Register (SR), but to recover from this state an interrupt must occur.</item> 
+<item><term>Submaster Clock (SMCLK)</term> -  This clock is the source for most peripherals, and its source can either be the DCO or Crystal 2.  The source clock is controlled with the  SELS and SCG bits of the BCSCTL2 and SR.  The divider is controlled by the DIVSx bits of the BCSCTL2.</item>
+<item><term>Auxiliary Clock (ACLK)</term> -  this clock line’s source is always LFXTCLK.  It is an option for slower subsystems to use in order to conserve power.  This clock can be divided as controlled by the DIVAx bits of the Basic Clock System Control Register 1 (BCSCTL1).</item>
+</list>
+
+</para>
+
+
+
+<para id="clock4">The MSP clock system has dividers at the beginning of its clocks, and at most peripheral destinations.  This allows for each module to keep a separate timing scheme from other modules by dividing the input frequency and then outputting it. The simplest dividers are multiples of two, thus the output might be a square wave of one half, quarter, or eighth the input square wave’s frequency.   This is often necessary for off chip buses because these systems have to meet a variety of speed requirements from the outside.  For educational purposes the fastest clocks are usually the most useful, but remember that power consumption is the primary cost of high speed clocks.  
+</para>
+
+
+
+</content>
+  
+</document>
